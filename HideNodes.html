@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hide Nodes</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        html,body{
+            margin:0;
+            padding: 0;
+        }
+        #container{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            row-gap: 0.5em;
+            width: 100%;
+            height: 100vh;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        class NodeX
+        {
+            nodex = {};
+            constructor()
+            {
+                this.nodex = document.createElement("nodex");
+                this.nodex.className = "nodeX";
+                this.applyStyleToNodex();
+            }
+            applyStyleToNodex()
+            {
+                this.nodex.style.display = "flex";
+                this.nodex.style.flexDirection = "row";
+                this.nodex.style.columnGap = "0.5em";
+                this.nodex.style.backgroundColor= "black";
+                this.nodex.style.width = "100%";
+                this.nodex.style.height = "100%";
+            }
+        }
+        class NodeY
+        {
+            nodey = {};
+            constructor(z)
+            {
+                this.nodey = document.createElement("nodey")
+                this.nodey.className = "nodeY";
+                this.nodey.innerHTML = z;
+                this.nodey.onclick = () => {this.nodey.style.visibility = "hidden";};
+                this.applyStyleToNodey();
+            }
+            applyStyleToNodey()
+            {
+                this.nodey.style.width = "100%";
+                this.nodey.style.height = "100%";
+                this.nodey.style.textAlign = "center";
+                this.nodey.style.alignContent = "center";
+                this.nodey.style.backgroundColor = "blueviolet";
+                this.nodey.style.color = "white";
+            }
+        }
+        function nodesCreation(x,y){
+            let container = document.getElementById("container");
+            let z = 0;
+            for (let i = 0; i < x; i++){
+                let nx = new NodeX();
+                container.appendChild(nx.nodex);
+                for (let j = 0; j < y; j++){
+                    z++; 
+                    let ny = new NodeY(z);
+                    nx.nodex.appendChild(ny.nodey);
+                }
+            }
+        }
+        nodesCreation(10,10);
+    </script>
+</body>
+</html>

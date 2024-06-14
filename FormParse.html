@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body{
+            background-color: silver;
+        }
+        h3{
+            text-align: center;
+        }
+        input{
+            border: solid black 1px;
+            border-radius: .6em;
+            height: 30px;
+        }
+        button{
+            border: solid black 1px;
+            border-radius: .6em;
+            height: 30px;
+            width: 100px;
+        }
+        label{
+            margin-right: 10px;
+        }
+        #sizeForm{
+            text-align: center;
+        }
+        #dataForm{
+            text-align: center;
+        }
+        #container{
+            margin-left: 15%;
+            margin-top: 25px;
+        }
+        @media only screen and (max-width: 600px)
+        {
+            #container{
+                overflow-x: auto;
+                margin: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h3>CRUD Operation Forms</h3>
+    <hr />
+    <form id="sizeForm">
+        <label for="sizeX">Number of rows:</label>
+        <input type="number" min="1" value="4" class="size" id="sizeX"/>
+        <br />
+        <label for="sizeY">Number of colls:</label>
+        <input type="number" min="1" value="7" class="size" id="sizeY" disabled/>
+        <hr />  
+        <button type="button" style="background-color: cornflowerblue;" onmousedown="audios[0].play()" onmouseup="audios[1].play()" onclick="mainEventMethods.createDataTable()">Create Table</button>
+    </form>
+    <br />
+    <form id="dataForm">
+        <label for="fn">First Name: &nbsp;&nbsp;&nbsp;</label>
+        <input type="text" id="fn" class="data"/>
+        <br />
+        <label for="ln">Last Name: &nbsp;&nbsp;&nbsp;</label>
+        <input type="text" id="ln" class="data"/>
+        <br />
+        <label for="sn">Short Name: &nbsp;</label>
+        <input type="text" id="sn" class="data"/>
+        <hr />
+        <button type="button" style="background-color: lightgreen;" onmousedown="audios[0].play()" onmouseup="audios[1].play()" onclick="mainEventMethods.addData()">Add Data</button>
+    </form>
+    <div id="container">
+    </div>
+    <script>
+        //#region [Init Global Variables]
+        var users = [];             
+        var struct = {};
+        var inputs = [];
+        var audios  = [
+                        new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/click.mp3'),
+                        new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/clickUp.mp3')
+                    ];
+        //#endregion
+        //#region [Classes]
+        class User
+        {
+            id = 0;
+            constructor(firstName, lastName, shortName){
+                this.firstName = firstName;
+                this.lastName = lastName;
+                this.shortName = shortName;
+            }
+            static usersFill()
+            {
+                users.push(new User('George','Filippas','pas'));
+                users.push(new User('Thanos','Tsolis','nas'));
+                users.push(new User('Konstantinos','Magioris','mag'));
+            }
+        }
+        class TableStructFunctions
+        {
+            static elementCreation(element)
+            {
+                return document.createElement(element);
+            }
+            static elementAppend(appendTo,element)
+            {
+                appendTo.appendChild(element);
+            }
+            static nodeCreation(text)
+            {
+                return document.createTextNode(text);
+            }
+        }
+        class TableStructCreation
+        {
+            constructor(numOfRows,numOfCols)
+            {
+                this.table = this.tableCreation();
+                this.thead = this.theadCreation(numOfCols);
+                this.tbody = this.tbodyCreation(numOfRows, numOfCols);
+
+                this.table.appendChild(this.thead);
+                this.table.appendChild(this.tbody);
+                
+                let container = document.getElementById("container");
+                container.appendChild(this.table);
+            }
+            tableCreation()
+            {
+                return TableStructFunctions.elementCreation('table');
+            }
+            theadCreation(cols)
+            {
+                let thead = TableStructFunctions.elementCreation('thead');
+                let headers = [];
+                let prePreLastCol = cols - 3;
+                let preLastColl = cols -2;
+                let lastColl = cols - 1;
+                
+                headers = Object.keys(new User(1,'f','l','p'));
+                for(let i = 0; i < cols; i++)
+                {
+                    if(i == prePreLastCol || i == preLastColl || i == lastColl)
+                        break;
+                    let th = TableStructFunctions.elementCreation('th');
+                    let header = TableStructFunctions.nodeCreation(headers[i]);
+                    th.appendChild(header);
+                    thead.appendChild(th);
+                }
+                return thead;
+            }
+            tbodyCreation(rows,cols)
+            {
+                let tbody = TableStructFunctions.elementCreation('tbody');
+                for(let i = 0; i < rows; i++)
+                {
+                    let tr = TableStructFunctions.elementCreation('tr');
+                    for(let j = 0; j < cols; j++)
+                    {
+                        let idColl = j == 0;
+                        let lastColl = j == cols-1;
+                        let preLastColl = j == cols-2;
+                        let prePreLastCol = j == cols-3;
+                        let td = TableStructFunctions.elementCreation('td');
+                        let input;
+                        
+                        
+                        if(prePreLastCol)
+                            input = mainEventMethods.updateBtnConstruct(i)
+                        else if(preLastColl)
+                            input = mainEventMethods.saveBtnConstruct(i);
+                        else if(lastColl)
+                            input = mainEventMethods.deleteBtnConstruct(tr);
+                        else
+                            input = TableStructFunctions.elementCreation('input');
+                        
+                        if(idColl)
+                            input.disabled = true;
+                        
+                        td.appendChild(input);
+                        tr.appendChild(td)
+                        inputs.push(input);
+                    }
+                    tbody.appendChild(tr);
+                }
+                return tbody;
+            }
+        }
+    //#region [EventRelatedMethods]
+        //#region [MainEventMethods]
+        class MainEventRelatedMethods
+        {
+            addData()
+            {
+                let data = document.getElementsByClassName("data");
+                users.push(new User(data[0].value, data[1].value, data[2].value));
+                data[0].value = "";
+                data[1].value = "";
+                data[2].value = "";
+                DataRelatedMethods.idsProperMatch();
+                alert("Data has been Added.");
+            }
+            createDataTable()
+            {
+                let oldtbl = document.getElementsByTagName('table')
+                if(oldtbl.length > 0)
+                    oldtbl[0].remove();
+                inputs = [];
+                let sizes = [];
+                let lines = document.getElementsByClassName("size");
+                sizes.push(lines[0].value);
+                sizes.push(lines[1].value);
+                struct = new TableStructCreation(sizes[0],sizes[1]);
+                DataRelatedMethods.idsProperMatch();
+                DataRelatedMethods.dataParse(inputs);
+            }
+            deleteBtnConstruct(tr)
+            { 
+                let input;
+                input = TableStructFunctions.elementCreation('button');
+                input.textContent = "Delete";
+                input.style.backgroundColor = "red";
+                input.addEventListener("click", function(){ subEventMethods.deletionEventListener(tr) });
+                return input;
+            }
+            saveBtnConstruct(rowToBeSaved)
+            {
+                let input;
+                input = TableStructFunctions.elementCreation('button');
+                input.textContent = "Save";
+                input.style.backgroundColor = "aqua";
+                input.addEventListener("click", function(){ subEventMethods.savingEventListener(rowToBeSaved) });
+                return input;        
+            }
+            updateBtnConstruct(rowToBeUpdated)
+            {
+                let input;
+                input = TableStructFunctions.elementCreation('button');
+                input.textContent = "Update";
+                input.style.backgroundColor = "yellow";
+                input.addEventListener("click", function(){ subEventMethods.updatingEventListener(rowToBeUpdated) });
+                return input;        
+            }
+        }
+        //#endregion
+        
+        //#region [EventRelatedSubMethods]
+        class EventRelatedSubMethods
+        {
+            deletionEventListener(tr)
+            {
+                let input = tr.firstChild.firstChild;
+                let id = Number(input.value);
+                this.removeChosenUser(id);
+                this.removeChosenLine(tr);
+                audios[0].play();
+            }
+            savingEventListener(rowToBeSaved)
+            {
+                this.saveChosenLineAsUser(rowToBeSaved);
+                DataRelatedMethods.idsProperMatch();
+                DataRelatedMethods.dataParse(inputs);
+                audios[0].play();
+            }
+            updatingEventListener(rowToBeUpdated)
+            {
+                this.updateChosenLineAsUser(rowToBeUpdated);
+                DataRelatedMethods.idsProperMatch();
+                DataRelatedMethods.dataParse(inputs);
+                audios[0].play();
+            }
+            updateChosenLineAsUser(row)
+            {
+                let userToBeUpdated = new User(inputs[row * 7 + 1].value, inputs[row * 7 + 2].value, inputs[row * 7 + 3].value);
+                users = users.with(row,userToBeUpdated);
+            }
+            saveChosenLineAsUser(row)
+            {
+                let newUser = [];
+                newUser.push(new User(inputs[row * 7 + 1].value, inputs[row * 7 + 2].value, inputs[row * 7 + 3].value));
+                users = users.concat(newUser);
+            }
+            removeChosenLine(row)
+            {
+               row.remove();
+            }
+            caseOfEmptyDataTable()
+            {
+                for(let j = 0; j <= 7 + 6; j +=7 )
+                {
+                    if(inputs[j].value != "" && users.length == 1)
+                    {
+                        users = [];
+                        break;
+                    }    
+                }
+            
+            }
+            removeChosenUser(id)
+            {
+                users = users.filter(u => u.id != id);
+            }
+
+        }
+        //#endregion
+    //#endregion
+        //#region [DataRelatedMethod]
+        class DataRelatedMethods
+        {
+            static dataParse(inputs)
+            {
+                let objsIndex = 0;
+                for(let k = 0; k < inputs.length; k += 7)
+                {
+                    if(users.length > 0)
+                    {
+                        inputs[k].value = users[objsIndex].id;
+                        inputs[k+1].value = users[objsIndex].firstName;
+                        inputs[k+2].value = users[objsIndex].lastName;
+                        inputs[k+3].value = users[objsIndex].shortName
+                        objsIndex++;
+                    }
+                    if(objsIndex == users.length) break;
+                }
+            }
+            static idsProperMatch()
+            {
+                let idCounter = 1;
+                users.forEach(x => { 
+                    x.id = idCounter;
+                    idCounter++;
+                })
+            }
+        }
+        //#endregion
+        //#endregion
+        //#region [Init Global Implementation]
+        var mainEventMethods = new MainEventRelatedMethods();
+        var subEventMethods = new EventRelatedSubMethods();
+        User.usersFill();
+        //#endregion
+    </script>
+</body>
+</html>
+    

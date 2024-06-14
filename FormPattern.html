@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pattern</title>
+</head>
+<body>
+    <form>
+        <label for="input">Input</label>
+            <input type="text" id ="input" oninput="matchWhileTyping()" ondblclick="clearField()"/>
+        <br/>
+        <label for="mask">Mask</label>
+            <input type = "text" value = "##/##/##" id = "mask"/>
+        <br/>
+        <label for="char">MapChar</label>
+            <input type = "text" maxlength="1" value="#" id = "char"/>
+    </form>    
+</body>
+<script>
+    class ElementsById{
+        constructor(id){
+            this.element = document.getElementById(id).value;
+        }
+    };
+    function getReferenceById(id)
+    {
+        return document.getElementById(id);
+    }
+    function matchWhileTyping(){
+        var formMask = new ElementsById("mask");
+        var formInput = new ElementsById("input");
+        let mapchar = new ElementsById("char").element;
+        let newElement = formInput.element;
+        let maskElement = formMask.element;
+        let byReference = getReferenceById("input");
+        if(event.inputType == "deleteContentBackward" || event.inputType == "deleteContentForward")
+            return;
+        if(maskElement.length == 0){
+            byReference.value = "";
+            return;
+        }    
+        else if(maskElement.length < newElement.length){
+            let size = byReference.value.length - 1;
+            byReference.value = byReference.value.slice(0,size);
+            return;
+        }
+        let formInputIndex = newElement.length-1; 
+        let previousElement = formInputIndex == 0 || formInputIndex == -1 ? "" : newElement[formInputIndex - 1];
+        if(formMask.element != null && formMask.element != ""){
+            let size = byReference.value.length -1 ;
+            let inputHasEnded = size == maskElement.length - 2;
+            byReference.value = byReference.value.slice(0,size);
+            if(!inputHasEnded && newElement.length - 1 >= 0){
+                byReference.value += maskElement[newElement.length-1] == mapchar ? newElement[newElement.length-1] : maskElement[newElement.length-1] + newElement[newElement.length-1];
+            }
+        }
+    }
+    function clearField(){
+        getReferenceById("input").value = "";
+    }
+</script>
+</html>
