@@ -245,8 +245,17 @@
             btn.style.color = 'black';
             btn.style.backgroundColor = '#6666ff'
             btn.style.borderRadius = ".6rem";
+            btn.onclick = () => {
+                let _h5 = document.getElementsByClassName('detail')[4]; 
+                _h5.style.color = 'blue'; 
+                setText(_h5,"Download has started!");
+                setTimeout(function() {setText(_h5,"Download has finished!")},5000);
+            }
             td.appendChild(btn);
             return td;
+        }
+        function setText(element, text){
+            element.innerHTML = text;
         }
         function getRndInteger(min, max) {
             return Math.floor(Math.random() * (max - min + 1) ) + min;
@@ -297,11 +306,11 @@
                     details[i].style.paddingTop = '25px';
                 }
                 details[0].innerHTML = `dato${igrouped}`;
-                details[4].innerHTML = 'download btn';
+                details[4].innerHTML = '-----';
             }
             else
             {
-                for(let i = 0; i < details.length; i++){
+                for(let i = 0; i < details.length-1; i++){
                     details[i].innerHTML = "";
                 }
             }
