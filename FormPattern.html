@@ -49,12 +49,23 @@
         let previousElement = formInputIndex == 0 || formInputIndex == -1 ? "" : newElement[formInputIndex - 1];
         if(formMask.element != null && formMask.element != ""){
             let size = byReference.value.length -1 ;
-            let inputHasEnded = size == maskElement.length - 2;
             byReference.value = byReference.value.slice(0,size);
-            if(!inputHasEnded && newElement.length - 1 >= 0){
-                byReference.value += maskElement[newElement.length-1] == mapchar ? newElement[newElement.length-1] : maskElement[newElement.length-1] + newElement[newElement.length-1];
-            }
+            if(newElement.length - 1 >= 0)
+                byReference.value += consecutiveNonMapChars(maskElement, newElement, mapchar, newElement[newElement.length-1]);
+            if(byReference.value.length > maskElement.length)
+                byReference.value = byReference.value.slice(0,-1);
         }
+    }
+    function consecutiveNonMapChars(maskElement, newElement, mapchar, charToAdd)
+    {
+        let str = "";
+        let index = newElement.length - 1;
+        while(index < maskElement.length && maskElement[index] != mapchar){
+            str += maskElement[index];
+            index++;
+        }
+        str += charToAdd; 
+        return str;
     }
     function clearField(){
         getReferenceById("input").value = "";
