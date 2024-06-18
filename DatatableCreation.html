@@ -14,7 +14,7 @@
             background-color: silver;
         }
         .container{
-            display:flex;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -131,6 +131,31 @@
             font-size: larger;
             height: 50px;
         }
+        .registerContainer{
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #registerWindow{
+            background-color: lightblue;
+            border-radius: 1rem;
+            width: 75vh;
+            height: 75vh;
+            text-align: center;
+            align-content: center;
+            display: grid;
+            grid-template-rows: 5fr 1fr;
+            grid-template-rows: repeat(1fr,4);
+        }
+        #exit{
+            grid-row: 1/1;
+            grid-column: 2/1;
+            cursor: pointer;
+            text-align: end;
+            padding-right: 25px;
+            padding-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +165,7 @@
                 <img width="200px" height="50px" src="html5-logo-31816.png" alt="logo">
             </div>
             <div class="btns">
-                <button id="register">Register</button>
+                <button id="register" onclick="register()">Register</button>
                 <button id="logout">Logout</button>
             </div>
         </header>
@@ -180,6 +205,11 @@
             </div>
         </footer>
     </container>
+    <container class="registerContainer">
+        <div id="registerWindow">
+            <div id="exit" onclick="exit()">x</div>
+        </div>
+    </container>
     <script>
         const last2rows = [];
         const last2groups = [];
@@ -189,6 +219,22 @@
         let previousRowSelection = null;
         var datatable = document.getElementsByClassName("datatable")[0];
         var sidemenu = document.getElementsByClassName("sidemenu")[0];
+        let container = document.getElementsByTagName('container');
+        
+        function register(){
+            container[0].style.display = 'none';
+            container[1].style.display = 'flex';
+        }
+        function exit(){
+            container[0].style.display = 'flex';
+            container[1].style.display = 'none';
+            // $(document).keydown(function(e) {
+            // if (e.key === "Escape") { 
+            //     container[0].style.display = flex;
+            //     container[1].style.display = none;
+            // }
+            // });
+        }
         function expandTable(){
             if(expand)
             {
