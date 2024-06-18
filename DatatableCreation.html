@@ -11,7 +11,7 @@
             padding: 0;
         }
         body{
-            background-color: silver;
+            background-color: lightblue;
         }
         .container{
             display: flex;
@@ -138,23 +138,64 @@
             height: 100vh;
         }
         #registerWindow{
-            background-color: lightblue;
+            background-color: #0096ff;
             border-radius: 1rem;
             width: 75vh;
             height: 75vh;
             text-align: center;
             align-content: center;
             display: grid;
-            grid-template-rows: 5fr 1fr;
-            grid-template-rows: repeat(1fr,4);
+            grid-template-columns: 5fr 1fr;
+            grid-template-rows: 1fr 5fr 2fr 2fr 2fr 2fr 1fr;
         }
         #exit{
-            grid-row: 1/1;
-            grid-column: 2/1;
+            grid-row: 1/2;
+            grid-column: 2/3;
             cursor: pointer;
             text-align: end;
             padding-right: 25px;
             padding-top: 15px;
+        }
+        .registerFormRow0{
+            visibility: hidden;
+            grid-row: 2/3;
+            grid-column: 1/-1;
+            text-align: center;
+        }
+        .registerFormRow1{
+            grid-row: 3/4;
+            grid-column: 1/-1;
+            text-align: center;
+        }
+        .registerFormRow2{
+            grid-row: 4/5;
+            grid-column: 1/-1;
+            text-align: center;            
+        }
+        .registerFormRow3{
+            grid-row: 5/6;
+            grid-column: 1/-1;
+            text-align: center;
+        }
+        .registerFormRow4{
+            grid-row: 6/7;
+            grid-column: 1/-1;
+            text-align: center;
+        }
+        label{
+            font-weight: bold;
+            font-size: larger;
+        }
+        .formrow{
+            width: 70%;
+            height: 50px;
+            border-radius: .6rem;
+        }
+        .formbtn{
+            cursor: pointer;
+            width: 25%;
+            height: 50px;
+            border-radius: .6rem;
         }
     </style>
 </head>
@@ -165,14 +206,14 @@
                 <img width="200px" height="50px" src="html5-logo-31816.png" alt="logo">
             </div>
             <div class="btns">
-                <button id="register" onclick="register()">Register</button>
-                <button id="logout">Logout</button>
+                <button id="register" onclick="register()" style="cursor: pointer;">Register</button>
+                <button id="logout" style="cursor: pointer;" onclick="logout()">Logout</button>
             </div>
         </header>
         <main>
             <div class="datatable">
                 <table>
-                    <thead onclick="expandTable()">
+                    <thead style = "cursor: pointer;" onclick="expandTable()">
                         <tr>
                             <th>Header 1</th>
                             <th>Header 2</th>
@@ -207,33 +248,94 @@
     </container>
     <container class="registerContainer">
         <div id="registerWindow">
-            <div id="exit" onclick="exit()">x</div>
+            <div id = "exit" onclick="exit()">
+                x
+            </div>
+            <div class="registerFormRow0">
+                <h3 id="welcome"></h3>
+            </div>
+            <div class="registerFormRow1">
+                <input class = "formrow" type="text" placeholder="Username">
+            </div>
+            <div class="registerFormRow2">
+                <input class = "formrow" type="password" placeholder="Password">
+            </div>
+            <div class="registerFormRow3">
+                <input class = "formrow" type="password" placeholder="Repeat Password">
+            </div>
+            <div class="registerFormRow4">
+                <input class = "formbtn" type="button" value="submit" style="background-color: rgb(72, 72, 226);" onclick="welcomeUser()">
+            </div>
         </div>
     </container>
     <script>
         const last2rows = [];
         const last2groups = [];
-        let numOfGroups = 7;
+        let userIsOnline = false;
+        let numOfGroups = 10;
         let isRowSelected = false;
         let expand = true;
         let previousRowSelection = null;
         var datatable = document.getElementsByClassName("datatable")[0];
         var sidemenu = document.getElementsByClassName("sidemenu")[0];
         let container = document.getElementsByTagName('container');
-        
+        let formrows = document.getElementsByClassName('formrow');
+        let username = '';
+        let name = '';
+        let welcome = '';
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if (evt.keyCode == 27) {
+                container[0].style.display = 'flex';
+                container[1].style.display = 'none';            
+                welcome.innerText = '';
+            }
+        };
+        function welcomeUser(){
+            welcome = document.getElementById('welcome');
+            welcome.style.visibility = 'visible';
+            if(formrows[1].value === formrows[2].value && formrows[1].value.length > 4){
+                username = formrows[0].value;
+                welcome.innerText = `Welcome ${username}`
+                welcome.style.color = 'lightgreen';
+                document.getElementById("register").style.display = 'none';
+                name = document.createElement('div');
+                name.innerHTML = `<b>${username} is online</b>`;
+                name.style.paddingRight = '10px';
+                name.style.color = 'white';
+                name.style.display = 'inline-block';
+                document.getElementsByClassName('btns')[0].prepend(name);
+                userIsOnline = true
+            }
+            else{
+                welcome.innerText = 'Invalid Entry';
+                welcome.style.color = 'red';
+            }
+        }
         function register(){
-            container[0].style.display = 'none';
-            container[1].style.display = 'flex';
+            if(!userIsOnline){
+                if(document.getElementById("register").innerText == 'Login'){
+                    formrows[2].style.visibility = 'hidden';
+                }
+                else if(document.getElementById("register").innerText == 'Register'){
+                    formrows[2].style.visibility = 'visible';
+                }
+                container[0].style.display = 'none';
+                container[1].style.display = 'flex';
+            }
+        }
+        function logout(){
+            if(userIsOnline){
+                document.getElementById("register").style.display = 'inline-block';
+                document.getElementById("register").innerText = 'Login';
+                name.remove();
+                userIsOnline = false;
+            }
         }
         function exit(){
             container[0].style.display = 'flex';
             container[1].style.display = 'none';
-            // $(document).keydown(function(e) {
-            // if (e.key === "Escape") { 
-            //     container[0].style.display = flex;
-            //     container[1].style.display = none;
-            // }
-            // });
+            welcome.innerText = '';
         }
         function expandTable(){
             if(expand)
@@ -361,7 +463,6 @@
                 }
             }
         }
-
         datatableParse(numOfGroups);
     </script>    
 </body>
