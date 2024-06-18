@@ -146,7 +146,7 @@
             align-content: center;
             display: grid;
             grid-template-columns: 5fr 1fr;
-            grid-template-rows: 1fr 5fr 2fr 2fr 2fr 2fr 1fr;
+            grid-template-rows: 1fr 5fr 2fr 2fr 2fr 2fr 1fr 1fr;
         }
         #exit{
             grid-row: 1/2;
@@ -179,6 +179,11 @@
         }
         .registerFormRow4{
             grid-row: 6/7;
+            grid-column: 1/2;
+            text-align: center;
+        }
+        .registerFormRow5{
+            grid-row: 7/8;
             grid-column: 1/-1;
             text-align: center;
         }
@@ -187,12 +192,23 @@
             font-size: larger;
         }
         .formrow{
+            font-size: 20px;
             width: 70%;
             height: 50px;
             border-radius: .6rem;
         }
+        .checklabel{
+            font-size: medium;
+        }
+        .passcheck{
+            cursor: pointer;
+            margin-top: 5px;
+            height: 25px;
+            width: 25px;
+        }
         .formbtn{
             cursor: pointer;
+            font-size: 20px;
             width: 25%;
             height: 50px;
             border-radius: .6rem;
@@ -264,6 +280,10 @@
                 <input class = "formrow" type="password" placeholder="Repeat Password">
             </div>
             <div class="registerFormRow4">
+                <label class="checklabel">Check to see password</label>
+                <input class = "passcheck" type="checkbox" onclick="isVisible()">
+            </div>
+            <div class="registerFormRow5">
                 <input class = "formbtn" type="button" value="submit" style="background-color: rgb(72, 72, 226);" onclick="welcomeUser()">
             </div>
         </div>
@@ -336,6 +356,18 @@
             container[0].style.display = 'flex';
             container[1].style.display = 'none';
             welcome.innerText = '';
+        }
+        function isVisible(){
+            if(formrows[1].type === 'password'){
+                formrows[1].type = 'text';
+                formrows[2].type = 'text';
+            }
+            else if(formrows[1].type === 'text'){
+                formrows[1].type = 'password';
+                formrows[2].type = 'password';
+            }
+            else
+                alert('something went wrong');
         }
         function expandTable(){
             if(expand)
