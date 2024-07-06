@@ -289,43 +289,56 @@
         </div>
     </container>
     <script>
+        //#region [Constants]
         const last2rows = [];
         const last2groups = [];
-        let userIsOnline = false;
-        let numOfGroups = 10;
-        let isRowSelected = false;
-        let expand = true;
-        let previousRowSelection = null;
-        var datatable = document.getElementsByClassName("datatable")[0];
-        var sidemenu = document.getElementsByClassName("sidemenu")[0];
-        let container = document.getElementsByTagName('container');
-        let formrows = document.getElementsByClassName('formrow');
-        let username = '';
-        let name = '';
-        let welcome = '';
+        const flex = 'flex';
+        const none = 'none';
+        const visible = 'visible';
+        const hidden = 'hidden';
+        //#endregion
+        //#region [GlobalVariablesConstruction]
+        class GlobalElementsInit{
+            constructor(groupnum){
+                this.userIsOnline = false;
+                this.numOfGroups = groupnum;
+                this.isRowSelected = false;
+                this.expand = true;
+                this.previousRowSelection = null;
+                this.datatable = document.getElementsByClassName("datatable")[0];
+                this.sidemenu = document.getElementsByClassName("sidemenu")[0];
+                this.container = document.getElementsByTagName('container');
+                this.formrows = document.getElementsByClassName('formrow');
+                this.username = '';
+                this.name = '';
+                this.welcome = '';
+            }
+        }
+        let globalObj = new GlobalElementsInit(15);
+        //#endregion
         document.onkeydown = function(evt) {
             evt = evt || window.event;
             if (evt.keyCode == 27) {
-                container[0].style.display = 'flex';
-                container[1].style.display = 'none';            
+                globalObj.container[0].style.display = flex;
+                globalObj.container[1].style.display = none;            
                 welcome.innerText = '';
             }
         };
         function welcomeUser(){
             welcome = document.getElementById('welcome');
-            welcome.style.visibility = 'visible';
-            if(formrows[1].value === formrows[2].value && formrows[1].value.length > 4){
-                username = formrows[0].value;
-                welcome.innerText = `Welcome ${username}`
+            welcome.style.visibility = visible;
+            if(globalObj.formrows[1].value === globalObj.formrows[2].value && globalObj.formrows[1].value.length > 4){
+                globalObj.username = globalObj.formrows[0].value;
+                welcome.innerText = `Welcome ${globalObj.username}`
                 welcome.style.color = 'lightgreen';
-                document.getElementById("register").style.display = 'none';
-                name = document.createElement('div');
-                name.innerHTML = `<b>${username} is online</b>`;
-                name.style.paddingRight = '10px';
-                name.style.color = 'white';
-                name.style.display = 'inline-block';
-                document.getElementsByClassName('btns')[0].prepend(name);
-                userIsOnline = true
+                document.getElementById("register").style.display = none;
+                globalObj.name = document.createElement('div');
+                globalObj.name.innerHTML = `<b>${globalObj.username} is online</b>`;
+                globalObj.name.style.paddingRight = '10px';
+                globalObj.name.style.color = 'white';
+                globalObj.name.style.display = 'inline-block';
+                document.getElementsByClassName('btns')[0].prepend(globalObj.name);
+                globalObj.userIsOnline = true
             }
             else{
                 welcome.innerText = 'Invalid Entry';
@@ -333,55 +346,55 @@
             }
         }
         function register(){
-            if(!userIsOnline){
+            if(!globalObj.userIsOnline){
                 if(document.getElementById("register").innerText == 'Login'){
-                    formrows[2].style.visibility = 'hidden';
+                    globalObj.formrows[2].style.visibility = hidden;
                 }
                 else if(document.getElementById("register").innerText == 'Register'){
-                    formrows[2].style.visibility = 'visible';
+                    globalObj.formrows[2].style.visibility = visible;
                 }
-                container[0].style.display = 'none';
-                container[1].style.display = 'flex';
+                globalObj.container[0].style.display = none;
+                globalObj.container[1].style.display = flex;
             }
         }
         function logout(){
-            if(userIsOnline){
+            if(globalObj.userIsOnline){
                 document.getElementById("register").style.display = 'inline-block';
                 document.getElementById("register").innerText = 'Login';
-                name.remove();
-                userIsOnline = false;
+                globalObj.name.remove();
+                globalObj.userIsOnline = false;
             }
         }
         function exit(){
-            container[0].style.display = 'flex';
-            container[1].style.display = 'none';
+            globalObj.container[0].style.display = flex;
+            globalObj.container[1].style.display = none;
             welcome.innerText = '';
         }
         function isVisible(){
-            if(formrows[1].type === 'password'){
-                formrows[1].type = 'text';
-                formrows[2].type = 'text';
+            if(globalObj.formrows[1].type === 'password'){
+                globalObj.formrows[1].type = 'text';
+                globalObj.formrows[2].type = 'text';
             }
-            else if(formrows[1].type === 'text'){
-                formrows[1].type = 'password';
-                formrows[2].type = 'password';
+            else if(globalObj.formrows[1].type === 'text'){
+                globalObj.formrows[1].type = 'password';
+                globalObj.formrows[2].type = 'password';
             }
             else
                 alert('something went wrong');
         }
         function expandTable(){
-            if(expand)
+            if(globalObj.expand)
             {
-                sidemenu.style.display = 'none';
-                datatable.style.gridColumn = '1/3';
+                globalObj.sidemenu.style.display = none;
+                globalObj.datatable.style.gridColumn = '1/3';
             }
             else
             {
-                datatable.style.gridColumn = '1/2';
-                sidemenu.style.display = 'grid';
-                sidemenu.style.gridColumn = '2/3';
+                globalObj.datatable.style.gridColumn = '1/2';
+                globalObj.sidemenu.style.display = 'grid';
+                globalObj.sidemenu.style.gridColumn = '2/3';
             }
-            expand = !expand;
+            globalObj.expand = !globalObj.expand;
         }
         function datatableParse(groupedSize){
             let tbody = document.getElementsByTagName('tbody')[0];
@@ -407,7 +420,7 @@
                                         function(){
                                             last2Conditions(i);
                                             last2Selections(row)
-                                            currentColorStateOfRows(tbody,row);
+                                            currentColorStateOfRows(tbody);
                                             rowEvent(row);
                                             sidemenuDetails(row,i);
                                             });
@@ -450,7 +463,7 @@
             if(last2rows.length == 3)
                 last2rows.splice(0,1);
         }
-        function currentColorStateOfRows(tbody,currentRow){
+        function currentColorStateOfRows(tbody){
             for(let i = 0; i < tbody.children.length; i++){
                 if(tbody.children[i].style.backgroundColor == 'green'){
                     tbody.children[i].style.backgroundColor = last2rows[0].style.backgroundColor;
@@ -495,7 +508,7 @@
                 }
             }
         }
-        datatableParse(numOfGroups);
+        datatableParse(globalObj.numOfGroups);
     </script>    
 </body>
 </html>
